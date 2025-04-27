@@ -4,6 +4,15 @@ const UserModel = require("../src/database/models/user.model"); // Import the Us
 const app = express();
 app.use(express.json()); // Middleware to parse JSON request bodies
 
+// Middleware to log request details
+// É executado antes de cada rota
+app.use((req, res, next) => {
+  console.log(`Request Method: ${req.method}`); // Log the HTTP method of the request
+  console.log(`Request URL: ${req.url}`); // Log the URL of the request
+  console.log(`Request Body: ${JSON.stringify(req.body)}`); // Log the body of the request
+  next(); // Call the next middleware or route handler
+});
+
 const PORT = 3000; // Define the port number
 
 app.get("/", (req, res) => {
