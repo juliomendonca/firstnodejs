@@ -1,6 +1,8 @@
 const express = require("express");
+const UserModel = require("../src/database/models/user.model"); // Import the UserModel from the database module
 
 const app = express();
+app.use(express.json()); // Middleware to parse JSON request bodies
 
 const PORT = 3000; // Define the port number
 
@@ -9,13 +11,59 @@ app.get("/", (req, res) => {
   res.status(200).send("<h1>Welcome to my server!</h1>"); // Send a welcome message as HTML response
 });
 
-app.get("/users", (req, res) => {
-  const users = [
-    { name: "Alice", age: 30 },
-    { name: "Bob", age: 25 },
-    { name: "Charlie", age: 35 },
-  ];
-  res.status(200).json(users); // Send the users data as JSON response
+app.get("/users", async (req, res) => {
+  try {
+    const users = await UserModel.find(); // Fetch all users from the database
+    res.status(200).json(users); // Send the users as JSON response
+  } catch (error) {
+    console.error("Error fetching users:", error); // Log the error to the console
+    res.status(500).send(error.message); // Send an error response
+  }
+});
+
+app.get("/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id; // Get the user ID from the request parameters
+    const users = await UserModel.findById(id); // Fetch all users from the database
+    res.status(200).json(users); // Send the users as JSON response
+  } catch (error) {
+    console.error("Error fetching users:", error); // Log the error to the console
+    res.status(500).send(error.message); // Send an error response
+  }
+});
+
+app.post("/users", async (req, res) => {
+  try {
+    const user = new UserModel(req.body); // Create a new user instance with the request body
+    req.status(201).json(user); // Send the created user as JSON response
+  } catch (error) {
+    console.error("Error creating user:", error); // Log the error to the console
+    res.status(500).send(error.message); // Send an error response
+  }
+});
+
+app.patch("/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id; // Get the user ID from the request parameters
+    const users = await UserModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    }); // Update the user with the given ID using the request body
+    res.status(200).json(users); // Send the users as JSON response
+  } catch (error) {
+    console.error("Error creating user:", error); // Log the error to the console
+    res.status(500).send(error.message); // Send an error response
+  }
+});
+
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id; // Get the user ID from the request parameters
+    const users = await UserModel.findByIdAndDelete(id); // Delete the user with the given ID using the request body
+    res.status(200).json(users); // Send the users as JSON response
+  } catch (error) {
+    console.error("Error creating user:", error); // Log the error to the console
+    res.status(500).send(error.message); // Send an error response
+  }
 });
 
 app.listen(PORT, () => {

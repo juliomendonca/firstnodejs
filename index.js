@@ -16,4 +16,4 @@ connectDB(); // Call the connectDB function to establish a connection to the dat
 
 // require("./modules/http"); // This will execute the http module code
 
-// require("./modules/express"); // This will execute the express module code
+require("./modules/express"); // This will execute the express module code
